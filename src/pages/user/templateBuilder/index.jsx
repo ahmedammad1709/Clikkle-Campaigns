@@ -1,5 +1,4 @@
 import { Button, Card, Container, Input, List, ListItem,  ListItemIcon, ListItemText, Modal } from '@mui/material';
-import axios from "axios";
 
 import { useEffect, useRef, useState } from 'react';
 import EmailEditor from 'react-email-editor';
@@ -24,7 +23,7 @@ const TemplateBuilder = () => {
 	const saveTemplate = () => {
 		const unlayer = emailEditorRef.current?.editor;
 		unlayer?.exportHtml((data) => {
-			axios
+			api
 				.patch( `/user/templates/${id}`, {
 					templateJson: data.design,
 					templateHtml: data.html,
