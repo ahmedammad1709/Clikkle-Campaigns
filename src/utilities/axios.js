@@ -2,8 +2,7 @@ import axios from "axios";
 
 
 const api = axios.create({
-  // baseURL: process.env.REACT_APP_SERVER || '', 
-  baseURL: 'https://campaigns.clikkle.com:9000', 
+  baseURL: process.env.REACT_APP_SERVER || 'https://api-campaigns-clikkle-com-main.onrender.com', 
 });
 
 const safeParse = (s) => {
