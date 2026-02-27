@@ -184,6 +184,7 @@ export default function CreateCampaigns() {
 	};
 
 	const onNameSubmit = async (_, formData) => {
+		console.log('onNameSubmit formData:', formData);
 		try {
 			const response = await api.patch(`/user/campaigns/${newId}`, formData);
 			const { success, message } = response.data;
@@ -248,6 +249,7 @@ export default function CreateCampaigns() {
 	};
 
 	const onSubjectSubmit = async (_, formData) => {
+		console.log('onSubjectSubmit formData:', formData);
 		try {
 			const response = await api.patch(`/user/campaigns/${newId}`, { ...formData, id: newId });
 			const { success, message } = response.data;

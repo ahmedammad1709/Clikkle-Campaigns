@@ -231,11 +231,14 @@ function Form({
 		// Getting axios method to use based on the method prop
 		const requestMethod = getAxiosMethod(method);
 		try {
-			const response = await axios({
-				url: action,
-				method: requestMethod,
-				data: values,
-			});
+			let response = {};
+			if (action) {
+				response = await axios({
+					url: action,
+					method: requestMethod,
+					data: values,
+				});
+			}
 
 			if (!retainOnSubmit) handlers.reset();
 
