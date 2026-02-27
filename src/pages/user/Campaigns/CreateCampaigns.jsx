@@ -183,7 +183,7 @@ export default function CreateCampaigns() {
 		setExpanded(panel);
 	};
 
-	const onNameSubmit = async (formData) => {
+	const onNameSubmit = async (_, formData) => {
 		try {
 			const response = await api.patch(`/user/campaigns/${newId}`, formData);
 			const { success, message } = response.data;
@@ -231,7 +231,7 @@ export default function CreateCampaigns() {
 		}
 	};
 
-	const onFromSubmit = async (formData) => {
+	const onFromSubmit = async (_, formData) => {
 		try {
 			const response = await api.patch(`/user/campaigns/${newId}`, { from: formData, id: newId });
 			const { success, message } = response.data;
@@ -247,7 +247,7 @@ export default function CreateCampaigns() {
 		}
 	};
 
-	const onSubjectSubmit = async (formData) => {
+	const onSubjectSubmit = async (_, formData) => {
 		try {
 			const response = await api.patch(`/user/campaigns/${newId}`, { ...formData, id: newId });
 			const { success, message } = response.data;
