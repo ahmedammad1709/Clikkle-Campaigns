@@ -34,8 +34,9 @@ import {
   facebookProvider,
   googleProvider,
 } from "../../utilities/firebase.config";
+import api from "../../utilities/axios";
 
-const API_BASE_URL = "https://accounts.clikkle.com:5000/api";
+// const API_BASE_URL = "https://accounts.clikkle.com:5000/api";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -98,89 +99,58 @@ const Login = () => {
   }
   const handlePasswordChange = (e) => setPassword(e.target.value);
 
-  const handleEmail = async () => {
+  const handleAction = async () => {
     setLoading(true);
+    setErrors({});
     try {
-      setErrors({});
-      const formData = new FormData();
-      formData.append("email", email + "@clikkmail.com");
-      localStorage.setItem("email", email + "@clikkmail.com");
-
-      const response = await fetch(
-        `https://accounts.clikkle.com:5000/api/auth/login_email`,
-        {
-          method: "POST",
-          body: formData,
+      if (step === 1) {
+        // Step 1: Check if email exists
+        const res = await api.post(`/exist`, { email });
+        if (res.data.success && res.data.exist) {
+          setStep(2);
+        } else {
+          setErrors({ email: "Email not found" });
         }
-      );
-
-      const responseData = await response.json();
-
-      if (response.ok && responseData.success) {
-        setStep(2);
-        showMessage({ success: "Email verified. Proceed to login." });
       } else {
-        const message = responseData.message || "Something went wrong.";
-        setErrors({ email: message });
-        showMessage({ error: message });
+        // Step 2: Login with password
+        const res = await api.post(`/login`, {
+          email,
+          password,
+        });
+
+        if (res.data.success) {
+          const responseData = res.data;
+          localStorage.setItem("user", JSON.stringify(responseData.user));
+          
+          if (responseData.accessToken) {
+            localStorage.setItem("token", responseData.accessToken);
+            setCookie("accessToken", responseData.accessToken);
+          }
+          
+          setCookie("userId", responseData.user._id);
+          setCookie("fullName", responseData.user.username);
+          setCookie("role", responseData.user.role);
+          showMessage({ success: "Login successful!" });
+          responseData.sourceUrl = window.location.origin;
+          const json = JSON.stringify(responseData);
+          const encoded = btoa(json);
+          console.log(responseData, "responseData");
+          const target = new URL("https://accounts.clikkle.com/other-apps/");
+          target.searchParams.set("user", encoded);
+          // setTimeout(function() {
+          navigate("/ListOrganization");
+          // }, 5000);
+        } else {
+          const message = res.data.message || "Invalid login credentials.";
+          setErrors({ password: message });
+          showMessage({ error: message });
+        }
       }
     } catch (error) {
-      console.error("Email step error:", error);
-      setErrors({ email: "An error occurred. Please try again." });
-      showMessage({ error: "Network or server error. Please try again." });
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleLogin = async () => {
-    setLoading(true);
-    try {
-      setErrors({});
-      const formData = new FormData();
-      formData.append("email", email + "@clikkmail.com");
-      formData.append("password", password);
-      formData.append("login_app", "Clikkle Campaigns");
-
-      const response = await fetch(
-        `https://accounts.clikkle.com:5000/api/auth/login`,
-        {
-          method: "POST",
-          body: formData,
-        }
-      );
-
-      const responseData = await response.json();
-
-      if (response.ok && responseData.success) {
-        localStorage.setItem("user", JSON.stringify(responseData.user));
-        localStorage.setItem(
-          "refreshToken",
-          JSON.stringify(responseData.refreshToken)
-        );
-        setCookie("accessToken", responseData.refreshToken);
-        setCookie("userId", responseData.user._id);
-        setCookie("fullName", responseData.user.username);
-        setCookie("role", responseData.user.role);
-        showMessage({ success: "Login successful!" });
-        responseData.sourceUrl = window.location.origin;
-        const json = JSON.stringify(responseData);
-        const encoded = btoa(json);
-        console.log(responseData, "responseData");
-        const target = new URL("https://accounts.clikkle.com/other-apps/");
-        target.searchParams.set("user", encoded);
-        // setTimeout(function() {
-        navigate("/ListOrganization");
-        // }, 5000);
-      } else {
-        const message = responseData.message || "Invalid login credentials.";
-        setErrors({ password: message });
-        showMessage({ error: message });
-      }
-    } catch (error) {
-      console.error("Login error:", error);
-      setErrors({ password: "An error occurred. Please try again." });
-      showMessage({ error: "Network or server error. Please try again." });
+      console.error("Action error:", error);
+      const msg = error.response?.data?.message || "An error occurred. Please try again.";
+      setErrors({ [step === 1 ? 'email' : 'password']: msg });
+      showMessage({ error: msg });
     } finally {
       setLoading(false);
     }
@@ -219,7 +189,7 @@ const Login = () => {
 
       const idToken = await result.user.getIdToken();
 
-      const response = await fetch(`${API_BASE_URL}/auth/socialLogin`, {
+      const response = await fetch(`${ACCOUNTS_API_URL}/auth/socialLogin`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -460,7 +430,7 @@ const Login = () => {
           color="primary"
           fullWidth
           sx={{ mt: 1, py: 1.2, bgcolor: "#006AFF" }}
-          onClick={step === 1 ? handleEmail : handleLogin}
+          onClick={handleAction}
           disabled={loading}
         >
           {loading ? (
