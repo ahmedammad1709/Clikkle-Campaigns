@@ -190,7 +190,7 @@ const Login = () => {
 
       const idToken = await result.user.getIdToken();
 
-      const response = await fetch(`${ACCOUNTS_API_URL}/auth/socialLogin`, {
+      const response = await fetch(`${process.env.REACT_APP_ACCOUNTS_API_URL}/auth/socialLogin`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
