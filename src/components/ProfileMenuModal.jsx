@@ -102,6 +102,7 @@ const ProfileMenuModal = ({
   useEffect(() => {
     const fetchUserStorage = async () => {
       try {
+        if (!user || !user._id) return;
         const response = await axios.get(
           `https://api.files.clikkle.com:4500/api/user/${user._id}`
         );

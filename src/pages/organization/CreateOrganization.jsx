@@ -56,7 +56,8 @@ const CreateOrganization = () => {
     try {
       const response = await api.get("/user/organizations", {
         headers: {
-          Authorization: `Bearer ${localStorage.getItem("refreshToken")}`,
+          // Authorization: `Bearer ${localStorage.getItem("refreshToken")}`, // Incorrect token type
+          Authorization: `Bearer ${localStorage.getItem("token") || localStorage.getItem("accessToken")}`,
         },
         withCredentials: true, // Optional, if backend uses cookies
       });
