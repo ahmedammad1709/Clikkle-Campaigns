@@ -10,6 +10,7 @@ import {
   InputAdornment,
   Link,
   CircularProgress,
+  useTheme,
 } from "@mui/material";
 import { Height, Visibility, VisibilityOff } from "@mui/icons-material";
 import {
@@ -19,7 +20,7 @@ import {
 } from "react-router-dom";
 import { getCookie, setCookie } from "../../utilities/cookies";
 import useSnack from "../../hooks/useSnack";
-import { useTheme } from "../../styles/theme";
+// import { useTheme } from "../../styles/theme";
 import { useFirstVisitRedirect } from "../../services/userFirstRedirect";
 import axios from "axios";
 
@@ -158,7 +159,7 @@ const Login = () => {
 
   const handleClickShowPassword = () => setShowPassword(!showPassword);
   const handleMouseDownPassword = (event) => event.preventDefault();
-  const { mode } = useTheme();
+  const mode = theme.palette.mode;
 
   const isDarkMode = mode === "dark";
 

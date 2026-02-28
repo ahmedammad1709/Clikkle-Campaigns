@@ -17,6 +17,7 @@
         "apexcharts": "^3.37.1",
         "autoprefixer": "^10.4.0",
         "axios": "^0.27.2",
+        "caniuse-lite": "^1.0.30001774",
         "chartjs": "^0.3.24",
         "csvtojson": "^2.0.10",
         "dayjs": "^1.11.13",
