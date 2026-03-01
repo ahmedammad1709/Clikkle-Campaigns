@@ -35,9 +35,9 @@ import {
   facebookProvider,
   googleProvider,
 } from "../../utilities/firebase.config";
-import api from "../../utilities/axios";
+// import api from "../../utilities/axios";
 
-// const API_BASE_URL = "https://accounts.clikkle.com:5000/api";
+const ACCOUNTS_API_URL = process.env.REACT_APP_ACCOUNTS_API_URL || "https://api.admin.clikkle.com";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -57,7 +57,7 @@ const Login = () => {
     try {
       // 1) Get the user profile
       const profileRes = await axios.post(
-        "https://accounts.clikkle.com:5000/api/auth/get_user_profile",
+        `${ACCOUNTS_API_URL}/auth/get_user_profile`,
         { id: userId }
       );
       const profileData = profileRes.data;
@@ -112,7 +112,7 @@ const Login = () => {
     try {
       if (step === 1) {
         // Step 1: Check if email exists
-        const res = await api.post(`/exist`, { email: fullEmail });
+        const res = await axios.post(`${ACCOUNTS_API_URL}/auth/exist`, { email: fullEmail });
         if (res.data.success && res.data.exist) {
           setStep(2);
         } else {
@@ -120,7 +120,7 @@ const Login = () => {
         }
       } else {
         // Step 2: Login with password
-        const res = await api.post(`/login`, {
+        const res = await axios.post(`${ACCOUNTS_API_URL}/auth/login`, {
           email: fullEmail,
           password,
         });
