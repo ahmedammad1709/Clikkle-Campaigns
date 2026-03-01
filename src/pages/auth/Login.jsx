@@ -35,9 +35,9 @@ import {
   facebookProvider,
   googleProvider,
 } from "../../utilities/firebase.config";
-// import api from "../../utilities/axios";
+import api from "../../utilities/axios";
 
-const ACCOUNTS_API_URL = process.env.REACT_APP_ACCOUNTS_API_URL || "https://api.admin.clikkle.com";
+// const ACCOUNTS_API_URL = process.env.REACT_APP_ACCOUNTS_API_URL || "https://api.admin.clikkle.com";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -112,7 +112,7 @@ const Login = () => {
     try {
       if (step === 1) {
         // Step 1: Check if email exists
-        const res = await axios.post(`${ACCOUNTS_API_URL}/auth/exist`, { email: fullEmail });
+        const res = await api.post(`/exist`, { email: fullEmail });
         if (res.data.success && res.data.exist) {
           setStep(2);
         } else {
@@ -120,7 +120,7 @@ const Login = () => {
         }
       } else {
         // Step 2: Login with password
-        const res = await axios.post(`${ACCOUNTS_API_URL}/auth/login`, {
+        const res = await api.post(`/login`, {
           email: fullEmail,
           password,
         });
