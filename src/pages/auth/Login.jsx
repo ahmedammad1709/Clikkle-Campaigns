@@ -103,10 +103,16 @@ const Login = () => {
   const handleAction = async () => {
     setLoading(true);
     setErrors({});
+    
+    // Auto-append @clikkmail.com if not present and not empty
+    const fullEmail = (email && !email.includes("@")) 
+      ? `${email}@clikkmail.com` 
+      : email;
+
     try {
       if (step === 1) {
         // Step 1: Check if email exists
-        const res = await api.post(`/exist`, { email });
+        const res = await api.post(`/exist`, { email: fullEmail });
         if (res.data.success && res.data.exist) {
           setStep(2);
         } else {
@@ -115,7 +121,7 @@ const Login = () => {
       } else {
         // Step 2: Login with password
         const res = await api.post(`/login`, {
-          email,
+          email: fullEmail,
           password,
         });
 
