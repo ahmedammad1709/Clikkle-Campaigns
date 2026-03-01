@@ -37,7 +37,10 @@ import {
 } from "../../utilities/firebase.config";
 // import api from "../../utilities/axios";
 
-const ACCOUNTS_API_URL = process.env.REACT_APP_ACCOUNTS_API_URL || "https://api.admin.clikkle.com";
+const ACCOUNTS_API_URL =
+  process.env.REACT_APP_SERVER ||
+  process.env.REACT_APP_API_URL ||
+  "https://api-campaigns-clikkle-com-main.onrender.com";
 
 const Login = () => {
   const [email, setEmail] = useState("");
