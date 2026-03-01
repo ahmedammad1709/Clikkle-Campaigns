@@ -37,10 +37,15 @@ import {
 } from "../../utilities/firebase.config";
 // import api from "../../utilities/axios";
 
-const ACCOUNTS_API_URL =
+// Base URL for the Campaigns backend (Render)
+const CAMPAIGNS_API_URL =
   process.env.REACT_APP_SERVER ||
   process.env.REACT_APP_API_URL ||
   "https://api-campaigns-clikkle-com-main.onrender.com";
+
+// Base URL for the central accounts/auth service
+const ACCOUNTS_API_URL =
+  process.env.REACT_APP_ACCOUNTS_API_URL || "https://api.admin.clikkle.com";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -114,16 +119,18 @@ const Login = () => {
 
     try {
       if (step === 1) {
-        // Step 1: Check if email exists
-        const res = await axios.post(`${ACCOUNTS_API_URL}/auth/exist`, { email: fullEmail });
+        // Step 1: Check if email exists (Campaigns backend)
+        const res = await axios.post(`${CAMPAIGNS_API_URL}/exist`, {
+          email: fullEmail,
+        });
         if (res.data.success && res.data.exist) {
           setStep(2);
         } else {
           setErrors({ email: "Email not found" });
         }
       } else {
-        // Step 2: Login with password
-        const res = await axios.post(`${ACCOUNTS_API_URL}/auth/login`, {
+        // Step 2: Login with password (Campaigns backend)
+        const res = await axios.post(`${CAMPAIGNS_API_URL}/login`, {
           email: fullEmail,
           password,
         });
