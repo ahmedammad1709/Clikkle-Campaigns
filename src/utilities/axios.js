@@ -1,5 +1,5 @@
 import axios from "axios";
-
+import { getCookie } from "./cookies";
 
 const api = axios.create({
   baseURL: process.env.REACT_APP_SERVER || 'https://api-campaigns-clikkle-com-main.onrender.com', 
@@ -18,26 +18,32 @@ api.interceptors.request.use(
   (config) => {
     if (typeof window === 'undefined') return config;
 
-    const userRaw = localStorage.getItem('user');
-    const refreshRaw = localStorage.getItem('refreshToken');
-    console.log('userRaw:', userRaw);
-    console.log('refreshRaw:', refreshRaw);
-    
-    const user = safeParse(userRaw);
-    const refreshToken = safeParse(refreshRaw); 
+    // 1. Try to get token from localStorage (direct string)
+    let token = localStorage.getItem('token');
 
-    const token = refreshToken || (user && (user.token || user.accessToken));
+    // 2. If not found, check localStorage 'user' object
+    if (!token) {
+      const userRaw = localStorage.getItem('user');
+      const user = safeParse(userRaw);
+      if (user && (user.token || user.accessToken)) {
+        token = user.token || user.accessToken;
+      }
+    }
+
+    // 3. If still not found, check cookies
+    if (!token) {
+      token = getCookie('accessToken') || getCookie('token');
+    }
 
     config.headers = config.headers || {};
 
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
-      console.log('Authorization header set:', `Bearer ${String(token).substring(0, 15)}...`);
+      // console.log('Authorization header set:', `Bearer ${String(token).substring(0, 15)}...`);
     } else {
-      console.log('No token set for request');
+      console.warn('No token set for request to:', config.url);
     }
 
-    console.log('Final headers:', config.headers);
     return config;
   },
   (error) => {

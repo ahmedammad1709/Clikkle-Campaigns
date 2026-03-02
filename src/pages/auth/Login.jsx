@@ -135,25 +135,24 @@ const Login = () => {
 
         if (res.data.success) {
           const responseData = res.data;
+          
+          // Save user data
           localStorage.setItem("user", JSON.stringify(responseData.user));
+          
+          // Save token - prioritize accessToken, fallback to token
           const token = responseData.accessToken || responseData.token;
           if (token) {
             localStorage.setItem("token", token);
             setCookie("accessToken", token);
+          } else {
+            console.error("No access token received from login API");
           }
+
           setCookie("userId", responseData.user._id);
-          setCookie("fullName", responseData.user.username || responseData.user.fullName || responseData.user.email);
+          setCookie("fullName", responseData.user.username);
           setCookie("role", responseData.user.role);
           showMessage({ success: "Login successful!" });
-          responseData.sourceUrl = window.location.origin;
-          const json = JSON.stringify(responseData);
-          const encoded = btoa(json);
-          console.log(responseData, "responseData");
-          const target = new URL("https://accounts.clikkle.com/other-apps/");
-          target.searchParams.set("user", encoded);
-          // setTimeout(function() {
           navigate("/ListOrganization");
-          // }, 5000);
         } else {
           const message = res.data.message || "Invalid login credentials.";
           setErrors({ password: message });

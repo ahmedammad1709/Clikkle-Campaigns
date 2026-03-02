@@ -1,24 +1,24 @@
 function getCookie(cname) {
-	console.log('Getting cookie for:', cname);
+	// console.log('Getting cookie for:', cname);
 	let name = cname + "=";
 	let decodedCookie = decodeURIComponent(document.cookie);
-	console.log('All cookies:', decodedCookie);
+	// console.log('All cookies:', decodedCookie);
 	let ca = decodedCookie.split(";");
-	console.log('Number of cookies found:', ca.length);
+	// console.log('Number of cookies found:', ca.length);
 	
 	for (let i = 0; i < ca.length; i++) {
 		let c = ca[i];
 		while (c.charAt(0) === " ") {
 			c = c.substring(1);
 		}
-		console.log(`Checking cookie [${i}]:`, c.substring(0, Math.min(20, c.length)) + '...');
+		// console.log(`Checking cookie [${i}]:`, c.substring(0, Math.min(20, c.length)) + '...');
 		if (c.indexOf(name) === 0) {
 			const value = c.substring(name.length, c.length);
-			console.log(`Found cookie ${cname}! Value length:`, value.length);
+			// console.log(`Found cookie ${cname}! Value length:`, value.length);
 			return value;
 		}
 	}
-	console.log(`Cookie ${cname} not found`);
+	// console.log(`Cookie ${cname} not found`);
 	return "";
 }
 
