@@ -37,11 +37,10 @@ import {
 } from "../../utilities/firebase.config";
 // import api from "../../utilities/axios";
 
-// Auth & campaigns API: Render backend (proxies to accounts.clikkle.com:5000 for auth)
+// Auth API: central accounts service (same as worksuite.clikkle.com)
 const API_BASE_URL =
-  process.env.REACT_APP_SERVER ||
-  process.env.REACT_APP_API_URL ||
-  "https://api-campaigns-clikkle-com-main.onrender.com";
+  process.env.REACT_APP_ACCOUNTS_API_URL ||
+  "https://accounts.clikkle.com:5000/api";
 
 const Login = () => {
   const [email, setEmail] = useState("");
