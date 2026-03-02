@@ -238,10 +238,34 @@ const CreateOrganization = () => {
     setPicture(file);
   };
 
-  const nextStep = () => setStep((prev) => prev + 1);
+  const nextStep = () => {
+    if (step === 1) {
+      if (!formInfo.name || !formInfo.Email) {
+        toast.warning("Please fill in all required fields", { position: "top-center" });
+        return;
+      }
+      // Basic email validation
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(formInfo.Email)) {
+        toast.warning("Please enter a valid email address", { position: "top-center" });
+        return;
+      }
+      // Website validation if provided
+      if (formInfo.Website) {
+        const urlRegex = /^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,63})([/\w .-]*)*\/?$/i;
+        if (!urlRegex.test(formInfo.Website)) {
+          toast.warning("Please enter a valid website URL", { position: "top-center" });
+          return;
+        }
+      }
+    }
+    setStep((prev) => prev + 1);
+  };
   const prevStep = () => setStep((prev) => prev - 1);
 
   return (
+    <>
+    <ToastContainer />
     <Dialog
       open={isModalOpen}
       onClose={handleCancel}
@@ -530,7 +554,7 @@ const CreateOrganization = () => {
                 <TextField
                   label="Organization Email"
                   name="Email"
-                  type="Email"
+                  type="email"
                   value={formInfo.Email}
                   onChange={handleChange}
                   fullWidth
@@ -794,344 +818,7 @@ const CreateOrganization = () => {
         )}
       </DialogActions>
     </Dialog>
-
-    // <div className="fixed inset-0 z-50 flex items-center justify-center">
-    //     <div className="  rounded-lg shadow-xl w-full max-w-lg h-[80vh] overflow-y-auto flex flex-col justify-between">
-    //         {organizationList.length > 0 && (
-    //             <button
-    //                 type="button"
-    //                 className="flex self-end mr-3 text-xl"
-    //                 onClick={(e) => handleCancel(e)}
-    //             >
-    //                 ×
-    //             </button>
-    //         )}
-    //         <div className="px-6 flex-1">
-    //             <StepIndicator currentStep={step} totalSteps={totalSteps} />
-
-    //             <form onSubmit={(e) => handleSubmit(e)} className="space-y-4">
-    //                 {/* === Step 1 === */}
-    //                 {step === 1 && (
-    //                     <>
-    //                         <div className="space-y-1">
-    //                             <h2 className="text-base font-semibold leading-tight">Hello, BCG Technologies! 👋</h2>
-    //                             <h2 className="text-base font-semibold leading-tight">We're delighted to have you with us 🎉</h2>
-    //                             <div className="flex items-center flex-wrap gap-2">
-    //                                 <h2 className="text-base font-semibold text-black leading-tight">
-    //                                     Start your <span className="text-blue-500">Forever Free Plan</span> of our
-    //                                 </h2>
-    //                                 <button
-    //                                     onClick={() => toggleDropdown()}
-    //                                     type="button"
-    //                                     className=" text-black px-3 py-1 rounded-lg shadow hover:bg-sky-300 transition"
-    //                                 >
-    //                                     Select Plan
-    //                                 </button>
-    //                             </div>
-    //                             <p className="text-sm text-gray-600 leading-snug">
-    //                                 Let’s get you started by filling your organization’s details
-    //                             </p>
-    //                         </div>
-
-    //                         <div>
-    //                             <label htmlFor="Name">Organization Name</label>
-    //                             <input
-    //                                 id="Name"
-    //                                 name="name"
-    //                                 value={formInfo.name}
-    //                                 onChange={(e) => handleChange(e)}
-    //                                 placeholder="Enter Name"
-    //                                 className="w-full border p-1 rounded"
-    //                             />
-    //                         </div>
-
-    //                         <div className="grid grid-cols-2 gap-2">
-    //                             <div>
-    //                                 <label htmlFor="Email">Organization Email</label>
-    //                                 <input
-    //                                     id="Email"
-    //                                     name="Email"
-    //                                     type="Email"
-    //                                     value={formInfo.Email}
-    //                                     onChange={(e) => handleChange(e)}
-    //                                     placeholder="Enter Email"
-    //                                     className="w-full border p-1 rounded"
-    //                                 />
-    //                             </div>
-    //                             <div>
-    //                                 <label htmlFor="Size">Organization Size</label>
-    //                                 <input
-    //                                     id="Size"
-    //                                     name="Size"
-    //                                     type="number"
-    //                                     value={formInfo.Size}
-    //                                     onChange={(e) => handleChange(e)}
-    //                                     placeholder="Enter Size"
-    //                                     className="w-full border p-1 rounded"
-    //                                 />
-    //                             </div>
-    //                         </div>
-
-    //                         <div>
-    //                             <label htmlFor="Website">Organization Website URL</label>
-    //                             <input
-    //                                 id="Website"
-    //                                 name="Website"
-    //                                 type="url"
-    //                                 value={formInfo.Website}
-    //                                 onChange={(e) => handleChange(e)}
-    //                                 placeholder="Enter Website URL"
-    //                                 className="w-full border p-1 rounded"
-    //                             />
-    //                         </div>
-
-    //                         <div>
-    //                             <label className="block mb-1 text-sm font-medium">Organization Logo</label>
-    //                             <div className="flex items-center gap-4 ">
-    //                                 <label className="cursor-pointer flex items-center justify-center w-16 h-16 border-2  rounded-full">
-    //                                     {image ? (
-    //                                         <img src={image} alt="Logo" className="w-full h-full object-cover p-1 rounded-full" />
-    //                                     ) : (
-    //                                         <AddOutlinedIcon className="text-gray-400" />
-    //                                     )}
-    //                                     <input
-    //                                         type="file"
-    //                                         accept="image/*"
-    //                                         onChange={(e) => handlePhotoChange(e)}
-    //                                         className="hidden"
-    //                                     />
-    //                                 </label>
-    //                                 <span className="text-sm text-gray-500">Upload your logo (1:1 ratio preferred)</span>
-    //                             </div>
-    //                         </div>
-    //                     </>
-    //                 )}
-
-    //                 {step === 2 && (
-    //                     <div>
-    //                         {/* Step 2 content */}
-    //                         <h2 className="text-xl font-semibold mb-2">
-    //                             Company Address 📍
-    //                         </h2>
-    //                         <p className="mb-4 text-gray-600">
-    //                             We require your company's physical Address to include in the footer of all your emails.
-    //                         </p>
-    //                         <p className="mb-4 text-gray-600">
-    //                             This would ensure compliance with anti-spam laws.                    </p>
-    //                         <label htmlFor="Address">Address</label>
-    //                         <input
-    //                             type="text"
-    //                             placeholder="Enter Address" id='Address' name='Address' value={formInfo.Address} onChange={(e) => handleChange(e)}
-    //                             className="w-full border p-2 mb-3 rounded"
-    //                         />
-    //                         <div className="grid grid-cols-2 gap-2">
-    //                             <div>
-    //                                 <label htmlFor="Country">Country</label>
-    //                                 <input
-    //                                     type="text"
-    //                                     placeholder="Enter Country" id='Country' name='Country' value={formInfo.Country} onChange={(e) => handleChange(e)}
-    //                                     className="w-full border p-2 mb-3 rounded"
-    //                                 />
-    //                             </div>
-    //                             <div>
-    //                                 <label htmlFor="ZipCode">Zip Code</label>
-    //                                 <input
-    //                                     type="text"
-    //                                     placeholder="Enter Zip Code" id='ZipCode' name='ZipCode' value={formInfo.ZipCode} onChange={(e) => handleChange(e)}
-    //                                     className="w-full border p-2 mb-3 rounded"
-    //                                 />
-    //                             </div>
-    //                         </div>
-    //                         <label htmlFor="City">City</label>
-    //                         <input
-    //                             type="text"
-    //                             placeholder="Enter City" id='City' name='City' value={formInfo.City} onChange={(e) => handleChange(e)}
-    //                             className="w-full border p-2 mb-3 rounded"
-    //                         />
-    //                     </div>
-    //                 )}
-    //                 {step === 3 && (
-    //                     <div>
-    //                         {/* Step 2 content */}
-    //                         <h2 className="text-xl font-semibold mb-2">
-    //                             How Large Is Your Contact List? 📘
-    //                         </h2>
-    //                         <p className="mb-6 text-gray-600">
-    //                             This would help us onboard you better.
-    //                         </p>
-    //                         <h3 className="mb-2 font-bold text-gray-600">
-    //                             What is the current size of your contact list?
-    //                         </h3>
-    //                         <div className="grid grid-cols-3 mb-4 gap-2">
-    //                             <div>
-    //                                 <input
-    //                                     type="text"
-    //                                     id='CurrencySize1' name='CurrencySize1' value={formInfo.CurrencySize1} onChange={(e) => handleChange(e)}
-    //                                     placeholder="Less then 500"
-    //                                     className="w-full border p-2 mb-3 rounded"
-    //                                 />
-    //                             </div>
-    //                             <div>
-    //                                 <input
-    //                                     type="text"
-    //                                     id='CurrencySize2' name='CurrencySize2' value={formInfo.CurrencySize2} onChange={(e) => handleChange(e)}
-    //                                     placeholder="500 to 1000"
-    //                                     className="w-full border p-2 mb-3 rounded"
-    //                                 />
-    //                             </div>
-    //                             <div>
-    //                                 <input
-    //                                     type="text"
-    //                                     id='CurrencySize3' name='CurrencySize3' value={formInfo.CurrencySize3} onChange={(e) => handleChange(e)}
-    //                                     placeholder="1000 to 2500"
-    //                                     className="w-full border p-2 mb-3 rounded"
-    //                                 />
-    //                             </div>
-    //                             <div>
-    //                                 <input
-    //                                     type="text"
-    //                                     id='CurrencySize4' name='CurrencySize4' value={formInfo.CurrencySize4} onChange={(e) => handleChange(e)}
-    //                                     placeholder="2500 to 5000"
-    //                                     className="w-full border p-2 mb-3 rounded"
-    //                                 />
-    //                             </div>
-    //                             <div>
-    //                                 <input
-    //                                     type="text"
-    //                                     id='CurrencySize5' name='CurrencySize5' value={formInfo.CurrencySize5} onChange={(e) => handleChange(e)}
-    //                                     placeholder="5000 to 10,000"
-    //                                     className="w-full border p-2 mb-3 rounded"
-    //                                 />
-    //                             </div>
-    //                             <div>
-    //                                 <input
-    //                                     type="text"
-    //                                     id='CurrencySize6' name='CurrencySize6' value={formInfo.CurrencySize6} onChange={(e) => handleChange(e)}
-    //                                     placeholder="10,000 to 25,000"
-    //                                     className="w-full border p-2 mb-3 rounded"
-    //                                 />
-    //                             </div>
-    //                             <div>
-    //                                 <input
-    //                                     type="text"
-    //                                     id='CurrencySize7' name='CurrencySize7' value={formInfo.CurrencySize7} onChange={(e) => handleChange(e)}
-    //                                     placeholder="25,000 to 50,000"
-    //                                     className="w-full border p-2 mb-3 rounded"
-    //                                 />
-    //                             </div>
-    //                             <div>
-    //                                 <input
-    //                                     type="text"
-    //                                     id='CurrencySize8' name='CurrencySize8' value={formInfo.CurrencySize8} onChange={(e) => handleChange(e)}
-    //                                     placeholder="50,000 to 100,000"
-    //                                     className="w-full border p-2 mb-3 rounded"
-    //                                 />
-    //                             </div>
-    //                             <div>
-    //                                 <input
-    //                                     type="text"
-    //                                     id='CurrencySize9' name='CurrencySize9' value={formInfo.CurrencySize9} onChange={(e) => handleChange(e)}
-    //                                     placeholder="Above 100,000"
-    //                                     className="w-full border p-2 mb-3 rounded"
-    //                                 />
-    //                             </div>
-    //                         </div>
-    //                         <label htmlFor="CompanyIndustry">Company Industry</label>
-    //                         <select id="CompanyIndustry" name='CompanyIndustry' value={formInfo.CompanyIndustry} onChange={(e) => handleChange(e)} className="  border border-gray-300 text-gray-900 text-sm rounded-md focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 ">
-    //                             <option selected>Select Industry</option>
-    //                             <option value="ABC">ABC</option>
-    //                             <option value="XYZ">XYZ</option>
-    //                             <option value="PQR">PQR</option>
-    //                         </select>
-    //                     </div>
-    //                 )}
-
-    //                 {step === 4 && (
-    //                     <div>
-    //                         {/* Step 2 content */}
-    //                         <h2 className="text-xl font-semibold mb-2">
-    //                             Free Migration Support (Optional)
-    //                         </h2>
-    //                         <p className="mb-4 text-gray-600">
-    //                             Our product experts are here to assist you in migrating from your current Email
-    //                             marketing platform (if applicable) to Clikkle Campaigns and will handle the complete
-    //                             setup of your account.
-    //                         </p>
-
-    //                         <label htmlFor="">Select your Platform</label>
-    //                         <div className="grid grid-cols-3 mb-4 gap-1">
-    //                             <div>
-    //                                 <img src='/images/Group/Group_2000.png' name="Group_2000.png" alt="Logo" onClick={(e) => handlePlatformList(e)} className="w-full h-full object-cover p-1" />
-    //                             </div>
-    //                             <div>
-    //                                 <img src='/images/Group/Group_2001.png' name="Group_2001.png" alt="Logo" onClick={(e) => handlePlatformList(e)} className="w-full h-full object-cover p-1" />
-    //                             </div>
-    //                             <div>
-    //                                 <img src='/images/Group/Group_2002.png' name="Group_2002.png" alt="Logo" onClick={(e) => handlePlatformList(e)} className="w-full h-full object-cover p-1" />
-    //                             </div>
-    //                             <div>
-    //                                 <img src='/images/Group/Group_2003.png' name="Group_2003.png" alt="Logo" onClick={(e) => handlePlatformList(e)} className="w-full h-full object-cover p-1" />
-    //                             </div>
-    //                             <div>
-    //                                 <img src='/images/Group/Group_2004.png' name="Group_2004.png" alt="Logo" onClick={(e) => handlePlatformList(e)} className="w-full h-full object-cover p-1" />
-    //                             </div>
-    //                             <div>
-    //                                 <img src='/images/Group/Group_2005.png' name="Group_2005.png" alt="Logo" onClick={(e) => handlePlatformList(e)} className="w-full h-full object-cover p-1" />
-    //                             </div>
-    //                             <div>
-    //                                 <img src='/images/Group/Group_2006.png' name="Group_2006.png" alt="Logo" onClick={(e) => handlePlatformList(e)} className="w-full h-full object-cover p-1" />
-    //                             </div>
-    //                             <div>
-    //                                 <img src='/images/Group/Group_2007.png' name="Group_2007.png" alt="Logo" onClick={(e) => handlePlatformList(e)} className="w-full h-full object-cover p-1" />
-    //                             </div>
-    //                             <div>
-    //                                 <img src='/images/Group/Group_2008.png' name="Group_2008.png" alt="Logo" onClick={(e) => handlePlatformList(e)} className="w-full h-full object-cover p-1" />
-    //                             </div>
-    //                         </div>
-    //                     </div>
-    //                 )}
-
-    //                 <div className="p-2 flex justify-end  ">
-    //                     {step > 1 && (
-    //                         <button
-    //                             type="button"
-    //                             onClick={() => prevStep()}
-    //                             className="text-gray-600 mr-4"
-    //                         >
-    //                             Previous Step
-    //                         </button>
-    //                     )}
-    //                     {step < totalSteps ? (
-    //                         <button
-    //                             type="button"
-    //                             onClick={() => nextStep()}
-    //                             disabled={(step === 1 && (!formInfo.name || !formInfo.Email || !formInfo.Size || !formInfo.Website || !image)) || (step === 2 && (!formInfo.Address || !formInfo.Country || !formInfo.ZipCode || !formInfo.City)) || (step === 3 && (!formInfo.CompanyIndustry))}
-    //                             className="text-white px-5 py-2 rounded disabled:opacity-50"
-    //                         >
-    //                             Next
-    //                         </button>
-    //                     ) : (
-    //                         <div className="flex gap-2">
-    //                             <button
-    //                                 type="button"
-    //                                 className=" text-gray-500 border-2 px-5 py-2 rounded"
-    //                             >
-    //                                 Skip & Continue
-    //                             </button>
-    //                             <button
-    //                                 type="submit"
-    //                                 className=" text-white px-5 py-2 rounded"
-    //                             >
-    //                                 Finish
-    //                             </button>
-    //                         </div>
-    //                     )}
-    //                 </div>
-    //             </form>
-    //         </div>
-
-    //     </div>
-    // </div>
+    </>
   );
 };
 
