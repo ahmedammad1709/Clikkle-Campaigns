@@ -101,20 +101,20 @@ const ProfileMenuModal = ({
 
   useEffect(() => {
     const fetchUserStorage = async () => {
-      try {
-        if (!user || !user._id) return;
-        const response = await axios.get(
-          `https://api.files.clikkle.com:4500/api/user/${user._id}`
-        );
-        // console.log(response.data.usedSpace, "response.data.usedSpace");
-        setCurrentUserStorage({ usedSpace: response.data.usedSpace }); // ✅ fix here
-      } catch (error) {
-        if (error.response && error.response.status === 404) {
-          // User not found in storage service - ignore
-        } else {
-          // console.error("Error fetching user storage:", error);
-        }
-      }
+      // Disabled fetching storage for now to prevent 404 errors for new users
+      // try {
+      //   if (!user || !user._id) return;
+      //   const response = await axios.get(
+      //     `https://api.files.clikkle.com:4500/api/user/${user._id}`
+      //   );
+      //   setCurrentUserStorage({ usedSpace: response.data.usedSpace });
+      // } catch (error) {
+      //   if (error.response && error.response.status === 404) {
+      //     // User not found in storage service - ignore
+      //   } else {
+      //     // console.error("Error fetching user storage:", error);
+      //   }
+      // }
     };
 
     fetchUserStorage();
