@@ -115,9 +115,10 @@ const Login = () => {
     try {
       if (step === 1) {
         // Step 1: Check if email exists (accounts API – same as worksuite.clikkle.com)
-        const res = await axios.post(`${API_BASE_URL}/auth/login_email`, {
-          email: fullEmail,
-        });
+        const formData = new FormData();
+        formData.append("email", fullEmail);
+
+        const res = await axios.post(`${API_BASE_URL}/auth/login_email`, formData);
         if (res.data.success) {
           setStep(2);
         } else {
@@ -125,10 +126,12 @@ const Login = () => {
         }
       } else {
         // Step 2: Login with password (accounts API – same as worksuite.clikkle.com)
-        const res = await axios.post(`${API_BASE_URL}/auth/login`, {
-          email: fullEmail,
-          password,
-        });
+        const formData = new FormData();
+        formData.append("email", fullEmail);
+        formData.append("password", password);
+        formData.append("login_app", "Clikkle Campaigns");
+
+        const res = await axios.post(`${API_BASE_URL}/auth/login`, formData);
 
         if (res.data.success) {
           const responseData = res.data;
