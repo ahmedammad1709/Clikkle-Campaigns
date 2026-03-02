@@ -37,15 +37,11 @@ import {
 } from "../../utilities/firebase.config";
 // import api from "../../utilities/axios";
 
-// Base URL for the Campaigns backend (Render)
-const CAMPAIGNS_API_URL =
+// Auth & campaigns API: Render backend (proxies to accounts.clikkle.com:5000 for auth)
+const API_BASE_URL =
   process.env.REACT_APP_SERVER ||
   process.env.REACT_APP_API_URL ||
   "https://api-campaigns-clikkle-com-main.onrender.com";
-
-// Base URL for the central accounts/auth service
-const ACCOUNTS_API_URL =
-  process.env.REACT_APP_ACCOUNTS_API_URL || "https://api.admin.clikkle.com";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -65,7 +61,7 @@ const Login = () => {
     try {
       // 1) Get the user profile
       const profileRes = await axios.post(
-        `${ACCOUNTS_API_URL}/auth/get_user_profile`,
+        `${API_BASE_URL}/auth/get_user_profile`,
         { id: userId }
       );
       const profileData = profileRes.data;
@@ -119,18 +115,18 @@ const Login = () => {
 
     try {
       if (step === 1) {
-        // Step 1: Check if email exists (Campaigns backend)
-        const res = await axios.post(`${CAMPAIGNS_API_URL}/exist`, {
+        // Step 1: Check if email exists (accounts API – same as worksuite.clikkle.com)
+        const res = await axios.post(`${API_BASE_URL}/auth/login_email`, {
           email: fullEmail,
         });
-        if (res.data.success && res.data.exist) {
+        if (res.data.success) {
           setStep(2);
         } else {
-          setErrors({ email: "Email not found" });
+          setErrors({ email: res.data.message || "Email not found" });
         }
       } else {
-        // Step 2: Login with password (Campaigns backend)
-        const res = await axios.post(`${CAMPAIGNS_API_URL}/login`, {
+        // Step 2: Login with password (accounts API – same as worksuite.clikkle.com)
+        const res = await axios.post(`${API_BASE_URL}/auth/login`, {
           email: fullEmail,
           password,
         });
@@ -138,14 +134,13 @@ const Login = () => {
         if (res.data.success) {
           const responseData = res.data;
           localStorage.setItem("user", JSON.stringify(responseData.user));
-          
-          if (responseData.accessToken) {
-            localStorage.setItem("token", responseData.accessToken);
-            setCookie("accessToken", responseData.accessToken);
+          const token = responseData.accessToken || responseData.token;
+          if (token) {
+            localStorage.setItem("token", token);
+            setCookie("accessToken", token);
           }
-          
           setCookie("userId", responseData.user._id);
-          setCookie("fullName", responseData.user.username);
+          setCookie("fullName", responseData.user.username || responseData.user.fullName || responseData.user.email);
           setCookie("role", responseData.user.role);
           showMessage({ success: "Login successful!" });
           responseData.sourceUrl = window.location.origin;
@@ -206,7 +201,7 @@ const Login = () => {
 
       const idToken = await result.user.getIdToken();
 
-      const response = await fetch(`${ACCOUNTS_API_URL}/auth/socialLogin`, {
+      const response = await fetch(`${API_BASE_URL}/auth/socialLogin`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
