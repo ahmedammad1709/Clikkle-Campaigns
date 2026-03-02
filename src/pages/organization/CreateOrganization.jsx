@@ -779,7 +779,7 @@ const CreateOrganization = () => {
           </Button>
         ) : (
           <>
-            <Button size="medium" onClick={handleCancel} variant="outlined">
+            <Button size="medium" onClick={handleSubmit} variant="outlined">
               Skip & Continue
             </Button>
             <Button

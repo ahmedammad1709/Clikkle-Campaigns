@@ -109,7 +109,11 @@ const ProfileMenuModal = ({
         // console.log(response.data.usedSpace, "response.data.usedSpace");
         setCurrentUserStorage({ usedSpace: response.data.usedSpace }); // ✅ fix here
       } catch (error) {
-        // console.error("Error fetching user storage:", error);
+        if (error.response && error.response.status === 404) {
+          // User not found in storage service - ignore
+        } else {
+          // console.error("Error fetching user storage:", error);
+        }
       }
     };
 
