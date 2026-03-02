@@ -171,12 +171,10 @@ const CreateOrganization = () => {
         formData.append("logo", picture);
       }
 
-      const accessToken = localStorage.getItem("refreshToken");
-
+      // Let axios interceptor handle Authorization
       const response = await api.post(`/user/organizations`, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
-          Authorization: `Bearer ${accessToken}`,
         },
       });
 
