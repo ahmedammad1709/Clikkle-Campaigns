@@ -18,7 +18,7 @@ import {
   useNavigate,
   useSearchParams,
 } from "react-router-dom";
-import { getCookie, setCookie } from "../../utilities/cookies";
+import { getCookie, setCookie, clearCookie } from "../../utilities/cookies";
 import useSnack from "../../hooks/useSnack";
 // import { useTheme } from "../../styles/theme";
 import { useFirstVisitRedirect } from "../../services/userFirstRedirect";
@@ -136,6 +136,19 @@ const Login = () => {
         if (res.data.success) {
           const responseData = res.data;
           
+          // Force Token Update: Clear old data before setting new
+          localStorage.clear();
+          // Clear all cookies aggressively
+          document.cookie.split(";").forEach((c) => {
+            document.cookie = c
+              .replace(/^ +/, "")
+              .replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
+          });
+          clearCookie("accessToken");
+          clearCookie("userId");
+          clearCookie("fullName");
+          clearCookie("role");
+
           // Save user data
           localStorage.setItem("user", JSON.stringify(responseData.user));
           
@@ -221,6 +234,13 @@ const Login = () => {
       }
 
       if (data.success) {
+        // Force Token Update
+        localStorage.clear();
+        clearCookie("accessToken");
+        clearCookie("userId");
+        clearCookie("fullName");
+        clearCookie("role");
+
         localStorage.setItem("token", data.token);
         localStorage.setItem("refreshToken", data.refreshToken);
         localStorage.setItem("sessionToken", data.sessionToken);
