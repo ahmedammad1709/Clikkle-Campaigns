@@ -35,6 +35,7 @@ const AutomationReport = lazy(() =>
 const CreateAutomation = lazy(() =>
   import("./pages/user/Automation/CreateAutomation")
 );
+const AutomationBuilder = lazy(() => import("./pages/user/Automation/Builder"));
 const Website = lazy(() => import("./pages/user/Website"));
 const ContentStudio = lazy(() => import("./pages/user/ContentStudio"));
 const Integration = lazy(() => import("./pages/user/Integration"));
@@ -277,6 +278,8 @@ function AppWithOrganizationCheck() {
 
           <Route path="/automation" element={<Automation />} />
           <Route path="/automation/new" element={<CreateAutomation />} />
+          <Route path="/automation/builder" element={<AutomationBuilder />} />
+          <Route path="/automation/builder/:id" element={<AutomationBuilder />} />
           <Route path="/automation/report" element={<AutomationReport />} />
 
           <Route path="/website" element={<Website />} />
