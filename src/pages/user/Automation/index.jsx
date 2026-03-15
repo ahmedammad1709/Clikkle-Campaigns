@@ -41,17 +41,13 @@ export default function Automation() {
     };
 
     const handleTestRun = async (automationId) => {
-        // For testing, we need a contact ID. 
-        // In a real scenario, you'd select a contact.
-        // For now, we'll prompt the user or just try to find one? 
-        // Let's ask the user for a contact ID for this test.
         const contactId = prompt("Enter a Contact ID to test with:");
-        if (!contactId) return;
+        if (contactId === null) return;
 
         try {
             const res = await api.post('/user/automations/test-trigger', {
                 automationId,
-                contactId
+                contactId: contactId || undefined
             });
             if (res.data.success) {
                 showMessage({ success: "Test run started! Check your email/logs." });
